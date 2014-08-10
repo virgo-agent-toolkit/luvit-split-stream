@@ -26,6 +26,39 @@ function getSource(src_data)
   return src
 end
 
+test('emits error when buffer overflows', nil, function(t)
+  local src = getSource({'12\n', '123456789\n'})
+
+  local sink_data = {}
+  local sink = stream.Writable:new()
+  sink._write = function(this, data, encoding, callback)
+    table.insert(sink_data, data)
+    callback()
+  end
+
+  local finish_count = 0
+  local finish = function()
+    finish_count = finish_count + 1
+    if finish_count == 2 then
+      t:finish()
+    end
+  end
+
+  sink:once('finish', function()
+    t:equal(1, #sink_data, 'exactly 1 chunk is expected')
+    t:equal(sink_data[1], '12', 'wrong chunk emitted')
+    finish()
+  end)
+
+  local split = Split:new({bufferSize = 4})
+  split:once('error', function(err)
+    t:equal(err, 'Split buffer overflow', 'wrong error emitted')
+    finish()
+  end)
+
+  src:pipe(split):pipe(sink)
+end)
+
 test('incoming chunks are properly merged', nil, function(t)
   local src = getSource({'chunk 1 ', 'chunk 2 ', 'chunk 3\n'})
 
