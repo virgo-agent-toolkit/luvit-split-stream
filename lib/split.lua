@@ -20,7 +20,10 @@ function Split:_transform(data, encoding, callback)
   self.buff = self.buff .. data
   local p = self.buff:find(self.sep)
   while p do
-    self:push(self.mapper(self.buff:sub(1, p - 1)))
+    local to_push = self.mapper(self.buff:sub(1, p - 1))
+    if to_push then
+      self:push(to_push)
+    end
     self.buff = self.buff:sub(p + #self.sep, -1)
     p = self.buff:find(self.sep)
   end

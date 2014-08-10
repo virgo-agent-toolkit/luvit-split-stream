@@ -110,6 +110,37 @@ test('mapper emits objects', nil, function(t)
       return {
         data = data
       }
-    end,})):pipe(sink)
+    end,
+  })):pipe(sink)
+end)
+
+test('nil from mapper is ignored', nil, function(t)
+  local src = getSource({'chunk 1 ', 'chunk 2\n', 'line 2\n'})
+
+  local sink_data = {}
+  local sink = stream.Writable:new({objectMode = true})
+  sink._write = function(this, data, encoding, callback)
+    table.insert(sink_data, data)
+    callback()
+  end
+  sink:once('finish', function()
+    t:equal(#sink_data, 1, 'should emit 2 chunks since there are 2 separator in input')
+    t:equal(type(sink_data[1]), 'table', 'emitted wrong data type')
+    t:equal(sink_data[1].data, 'chunk 1 chunk 2', 'emitted wrong data')
+    t:finish()
   end)
+
+  src:pipe(Split:new({
+    objectMode = true,
+    mapper = function(data)
+      if #data > 8 then
+        return {
+          data = data
+        }
+      else
+        return nil
+      end
+    end,
+  })):pipe(sink)
+end)
 
