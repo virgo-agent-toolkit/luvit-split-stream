@@ -1,5 +1,5 @@
 return {
-  name = "split-stream",
+  name = "rphillips/split-stream",
   version = "0.1.0",
   description = "a Transform stream that (re-)splits upstream string into chunks based on provided separator",
   repository = {
