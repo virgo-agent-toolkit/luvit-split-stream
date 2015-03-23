@@ -1,15 +1,7 @@
 return {
-  name = "rphillips/split-stream",
-  version = "0.4.0",
+  name = "virgo-agent-toolkit/split-stream",
+  version = "0.5.0",
   description = "a Transform stream that (re-)splits upstream string into chunks based on provided separator",
-  repository = {
-    url = "https://github.com/virgo-agent-toolkit/luvit-split-stream.git",
-  },
-  author = {
-    name = "Song Gao",
-    email = "song@gao.io",
-    url = "https://song.gao.io",
-  },
   contributors = {
     {
       name = "Robert Chiniquy",
@@ -28,9 +20,7 @@ return {
     },
   },
   licenses = {"Apache-2.0"},
-  dependencies = { },
-  devDependencies = {
-    ["tape"] = "https://github.com/virgo-agent-toolkit/luvit-tape",
-  },
-  main = 'init.lua',
+  dependencies = {
+    "luvit/luvit@2.0.2"
+  }
 }

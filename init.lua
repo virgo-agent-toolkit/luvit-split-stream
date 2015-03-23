@@ -1,3 +1,1 @@
-local Split = require('./lib/split')
-
-return Split
+return require('./lib/split')
