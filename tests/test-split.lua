@@ -30,7 +30,7 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new()
-    sink._write = function(this, data, encoding, callback)
+    sink._write = function(_, data, _, callback)
       table.insert(sink_data, data)
       callback()
     end
@@ -53,7 +53,7 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new()
-    sink._write = function(this, data, encoding, callback)
+    sink._write = function(_, data, _, callback)
       table.insert(sink_data, data)
       callback()
     end
@@ -70,7 +70,7 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new()
-    sink._write = function(this, data, encoding, callback)
+    sink._write = function(_, data, _, callback)
       table.insert(sink_data, data)
       callback()
     end
@@ -91,7 +91,7 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new()
-    sink._write = function(this, data, encoding, callback)
+    sink._write = function(_, data, _, callback)
       table.insert(sink_data, data)
       callback()
     end
@@ -110,17 +110,17 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new({objectMode = true})
-    sink._write = function(this, data, encoding, callback)
+    sink._write = function(_, data, _, callback)
       table.insert(sink_data, data)
       callback()
     end
-    sink:once('finish', function()
+    sink:once('finish', expect(function()
       assert(#sink_data == 2, 'should emit 2 chunks since there are 2 separator in input')
       assert(type(sink_data[1]) == 'table', 'emitted wrong data type')
       assert(type(sink_data[2]) == 'table', 'emitted wrong data type')
       assert(sink_data[1].data == 'chunk 1 chunk 2', 'emitted wrong data')
       assert(sink_data[2].data == 'line 2', 'emitted wrong data')
-    end)
+    end))
 
     src:pipe(Split:new({
       objectMode = true,
@@ -135,15 +135,15 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new({objectMode = true})
-    sink._write = function(this, data, encoding, callback)
+    sink._write = function(_, data, _, callback)
       table.insert(sink_data, data)
       callback()
     end
-    sink:once('finish', function()
+    sink:once('finish', expect(function()
       assert(#sink_data == 1, 'should emit 2 chunks since there are 2 separator in input')
       assert(type(sink_data[1]) == 'table', 'emitted wrong data type')
       assert(sink_data[1].data == 'chunk 1 chunk 2', 'emitted wrong data')
-    end)
+    end))
 
     src:pipe(Split:new({
       objectMode = true,
