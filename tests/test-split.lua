@@ -1,29 +1,32 @@
 require('tap')(function(test)
   local stream = require('stream')
   local table = require('table')
-  local timer = require('timer')
   local Split = require('../lib/split')
 
   local function getSource(src_data)
-    local len = #src_data
     local src = stream.Readable:new()
-    src._read = function(this, n)
-      for i=1,n do
-        if 1 <= #src_data then
-          local chunk = table.remove(src_data, 1)
-          timer.setTimeout(i * 50, function()
-            this:push(chunk)
-          end)
-        else
-          timer.setTimeout((len + 1) * 50, function()
-            this:push(nil)
-          end)
-        end
+    src._read = function(self)
+      for i=1, #src_data do
+        self:push(src_data[i])
       end
+      self:push()
     end
-
     return src
   end
+
+  test('incoming chunks big data', function(expect)
+    local chunks = {}
+    for i=1, 1024*50 do
+      table.insert(chunks, 'abcdefghijklmnopqrstuvwxyz\n')
+    end
+    local src = getSource(chunks)
+    local sink = stream.Writable:new()
+    sink._write = function(self, data, _, callback)
+      callback()
+    end
+    sink:once('finish', expect(function() end))
+    src:pipe(Split:new()):pipe(sink)
+  end)
 
   test('emits error when buffer overflows', function(expect)
     local src = getSource({'12\n', '123456789\n'})
