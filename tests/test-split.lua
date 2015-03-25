@@ -29,29 +29,6 @@ require('tap')(function(test)
     src:pipe(Split:new()):pipe(sink)
   end)
 
-  test('emits error when buffer overflows', function(expect)
-    local src = getSource({'12\n', '123456789\n'})
-
-    local sink_data = {}
-    local sink = stream.Writable:new()
-    sink._write = function(_, data, _, callback)
-      table.insert(sink_data, data)
-      callback()
-    end
-
-    sink:once('finish', expect(function()
-      assert(1 ==  #sink_data, 'exactly 1 chunk is expected')
-      assert(sink_data[1] == '12', 'wrong chunk emitted')
-    end))
-
-    local split = Split:new({bufferSize = 4})
-    split:once('error', expect(function(err)
-      assert(err == 'Split buffer overflow', 'wrong error emitted')
-    end))
-
-    src:pipe(split):pipe(sink)
-  end)
-
   test('incoming chunks are properly merged', function(expect)
     local src = getSource({'chunk 1 ', 'chunk 2 ', 'chunk 3\n'})
 
@@ -66,6 +43,18 @@ require('tap')(function(test)
       assert(sink_data[1] == 'chunk 1 chunk 2 chunk 3', 'emitted wrong merged data')
     end))
 
+    src:pipe(Split:new()):pipe(sink)
+  end)
+
+  test('incoming chunks big data', function(expect)
+    local chunks = {}
+    for i=1, 10 do
+      table.insert(chunks, {'abcdefghijklmnopqrstuvwxyz\n'})
+    end
+    local src = getSource(chunks)
+    local sink = stream.Writable:new()
+    sink._write = function(_, data, _, callback) callback() end
+    sink:once('finish', expect(function() end))
     src:pipe(Split:new()):pipe(sink)
   end)
 
