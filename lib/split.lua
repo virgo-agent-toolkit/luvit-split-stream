@@ -1,5 +1,4 @@
 local Transform = require('stream').Transform
-local timer = require('timer')
 
 local function gsplit2(s, sep)
   local lasti, done, g = 1, false, s:gmatch('(.-)'..sep..'()')
@@ -41,7 +40,7 @@ function Split:_transform(data, _, callback)
       if mapped then self:push(mapped) end
     end
   end
-  timer.setImmediate(callback)
+  process.nextTick(callback)
 end
 
 return Split
