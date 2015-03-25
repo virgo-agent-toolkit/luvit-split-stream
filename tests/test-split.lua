@@ -46,18 +46,6 @@ require('tap')(function(test)
     src:pipe(Split:new()):pipe(sink)
   end)
 
-  test('incoming chunks big data', function(expect)
-    local chunks = {}
-    for i=1, 10 do
-      table.insert(chunks, {'abcdefghijklmnopqrstuvwxyz\n'})
-    end
-    local src = getSource(chunks)
-    local sink = stream.Writable:new()
-    sink._write = function(_, data, _, callback) callback() end
-    sink:once('finish', expect(function() end))
-    src:pipe(Split:new()):pipe(sink)
-  end)
-
   test('chunks are properly split', function(expect)
     local src = getSource({'chunk 1 ', 'chunk 2\n', 'line 2\nline 3\n'})
 
