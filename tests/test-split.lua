@@ -17,7 +17,7 @@ require('tap')(function(test)
 
   test('incoming chunks big data', function(expect)
     local chunks = {}
-    for i=1, 1024*500 do
+    for i=1, 1024*10 do
       table.insert(chunks, 'abcdefghijklmnopqrstuvwxyz\n')
     end
     local src = getSource(chunks)
