@@ -17,13 +17,13 @@ require('tap')(function(test)
 
   test('incoming chunks big data', function(expect)
     local chunks = {}
-    for i=1, 1024*10 do
+    for i=1, 1024*100*1 do
       table.insert(chunks, 'abcdefghijklmnopqrstuvwxyz\n')
     end
     local src = getSource(chunks)
     local sink = stream.Writable:new()
     sink._write = function(self, data, _, callback)
-      callback()
+      timer.setImmediate(callback)
     end
     sink:once('finish', expect(function() end))
     src:pipe(Split:new()):pipe(sink)

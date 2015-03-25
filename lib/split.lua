@@ -25,7 +25,8 @@ function Split:_transform(data, _, callback)
     self.falted = true
   end
   if self.falted then
-    return timer.setImmediate(callback)
+    timer.setImmediate(callback)
+    return
   end
   self.buff = self.buff .. data
   local p = self.buff:find(self.sep)
