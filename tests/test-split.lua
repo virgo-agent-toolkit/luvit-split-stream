@@ -2,21 +2,22 @@ require('tap')(function(test)
   local stream = require('stream')
   local table = require('table')
   local Split = require('../lib/split')
+  local timer = require('timer')
 
   local function getSource(src_data)
     local src = stream.Readable:new()
     src._read = function(self)
-      for i=1, #src_data do
-        self:push(src_data[i])
-      end
-      self:push()
+      timer.setImmediate(function()
+        local data = table.remove(src_data, 1)
+        self:push(data)
+      end)
     end
     return src
   end
 
   test('incoming chunks big data', function(expect)
     local chunks = {}
-    for i=1, 1024*50 do
+    for i=1, 1024*500 do
       table.insert(chunks, 'abcdefghijklmnopqrstuvwxyz\n')
     end
     local src = getSource(chunks)
