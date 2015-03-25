@@ -21,7 +21,7 @@ return {
   },
   licenses = {"Apache-2.0"},
   dependencies = {
-    "luvit/luvit@2.0.2"
+    "luvit/luvit@2.0.3"
   },
   files = {
     "!tests",
