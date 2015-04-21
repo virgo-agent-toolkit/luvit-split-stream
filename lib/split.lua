@@ -28,7 +28,7 @@ function Split:initialize(options)
   self.mapper = options.mapper or function(data) return data end
 end
 
-function Split:_transform(data, _, callback)
+function Split:_transform(data, callback)
   if self.buffer then
     data = self.buffer .. data
   end

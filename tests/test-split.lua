@@ -17,12 +17,12 @@ require('tap')(function(test)
 
   test('incoming chunks big data', function(expect)
     local chunks = {}
-    for i=1, 1024*100*1 do
+    for i=1, 1024 do
       table.insert(chunks, 'abcdefghijklmnopqrstuvwxyz\n')
     end
     local src = getSource(chunks)
     local sink = stream.Writable:new()
-    sink._write = function(self, data, _, callback)
+    sink._write = function(self, data, callback)
       timer.setImmediate(callback)
     end
     sink:once('finish', expect(function() end))
@@ -34,7 +34,7 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new()
-    sink._write = function(_, data, _, callback)
+    sink._write = function(_, data, callback)
       table.insert(sink_data, data)
       callback()
     end
@@ -51,7 +51,7 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new()
-    sink._write = function(_, data, _, callback)
+    sink._write = function(_, data, callback)
       table.insert(sink_data, data)
       callback()
     end
@@ -72,7 +72,7 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new()
-    sink._write = function(_, data, _, callback)
+    sink._write = function(_, data, callback)
       table.insert(sink_data, data)
       callback()
     end
@@ -91,7 +91,7 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new({objectMode = true})
-    sink._write = function(_, data, _, callback)
+    sink._write = function(_, data, callback)
       table.insert(sink_data, data)
       callback()
     end
@@ -116,7 +116,7 @@ require('tap')(function(test)
 
     local sink_data = {}
     local sink = stream.Writable:new({objectMode = true})
-    sink._write = function(_, data, _, callback)
+    sink._write = function(_, data, callback)
       table.insert(sink_data, data)
       callback()
     end
